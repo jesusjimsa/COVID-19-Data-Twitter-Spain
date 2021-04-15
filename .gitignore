@@ -209,3 +209,8 @@ Thumbs.db
 # End of https://www.toptal.com/developers/gitignore/api/python,macos,linux,visualstudiocode
 
 yesterday.txt
+ACCESS_TOKEN
+ACCESS_TOKEN_SECRET
+API_KEY
+API_SECRET_KEY
+BEARER_TOKEN
