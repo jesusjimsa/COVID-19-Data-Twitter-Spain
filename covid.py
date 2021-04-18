@@ -2,10 +2,12 @@ import requests
 from bs4 import BeautifulSoup
 import re
 from datetime import date
+from twython import Twython
+from auth import ACCESS_TOKEN, ACCESS_TOKEN_SECRET, API_KEY, API_SECRET_KEY
 
 URL_CASES = 'https://www.worldometers.info/coronavirus/country/spain/'
 URL_VACCINES = 'https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov/vacunaCovid19.htm'
-POBLACION_ESP = 47450795    # https://www.ine.es/jaxi/Tabla.htm?path=/t20/e245/p08/l0/&file=02003.px&L=0
+POBLACION_ESP = 47450795    # https://www.ine.es/jaxi/Tabla.htm?path=/t20/e245/p08/l0/&file=02003.px&L=0  
 
 
 def get_vaccines():
@@ -96,10 +98,24 @@ today = date.today()
 
 day = today.strftime("%d/%m/%Y")
 
-tweet_casos = ('Información COVID ' + day + '\n\n' + 'Casos: ' + new_cases + ' (' + diff_cases_str + ')' +
-               '\nFallecimientos: ' + new_deaths + ' (' + diff_deaths_str + ')')
+tweet_casos = ('Información COVID-19 ' + day + ' 🇪🇸\n\n' + '‣ Casos: ' + new_cases + ' (' + diff_cases_str + ')' +
+               '\n‣ Fallecimientos: ' + new_deaths + ' (' + diff_deaths_str + ')\n\n#COVID19España')
 
-tweet_vacunas = ('Información vacunas ' + day + '\n\n' + 'Vacunas distribuidas: ' + new_distribuidas + ' (' +
-                 diff_distribuidas_str + ')' + '\nAdministradas: ' + new_administradas + ' (' + diff_administradas_str
-                 + ')' + '\nCompletas: ' + new_completas + '(' + diff_completas_str + ')' + '\n\n' +
-                 'Población inmunizada: {:.2f}%'.format(porcentaje_completas))
+tweet_vacunas = ('Información vacunas ' + day + ' 🇪🇸\n\n' + '‣ Vacunas distribuidas: ' + new_distribuidas + ' (' +
+                 diff_distribuidas_str + ')' + '\n‣ Administradas: ' + new_administradas + ' (' + diff_administradas_str
+                 + ')' + '\n‣ Completas: ' + new_completas + '(' + diff_completas_str + ')' + '\n\n' +
+                 'Población inmunizada: {:.2f}%\n\n#COVID19España'.format(porcentaje_completas))
+
+# print(tweet_casos)
+# print('\n')
+# print(tweet_vacunas)
+
+twitter = Twython(
+    API_KEY,
+    API_SECRET_KEY,
+    ACCESS_TOKEN,
+    ACCESS_TOKEN_SECRET
+)
+
+twitter.update_status(status=tweet_casos)
+twitter.update_status(status=tweet_vacunas)
