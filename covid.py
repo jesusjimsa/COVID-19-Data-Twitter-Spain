@@ -98,12 +98,12 @@ today = date.today()
 
 day = today.strftime("%d/%m/%Y")
 
-tweet_casos = ('Información COVID-19 ' + day + ' 🇪🇸\n\n' + '‣ Casos: ' + new_cases + ' (' + diff_cases_str + ')' +
-               '\n‣ Fallecimientos: ' + new_deaths + ' (' + diff_deaths_str + ')\n\n#COVID19España')
+tweet_casos = ('Información COVID-19 ' + day + ' 🇪🇸\n\n' + '‣ Casos: ' + new_cases + '\n‣ Fallecimientos: ' + new_deaths
+               + '\n\n#COVID19España')
 
 tweet_vacunas = ('Información vacunas ' + day + ' 🇪🇸\n\n' + '‣ Vacunas distribuidas: ' + new_distribuidas + ' (' +
                  diff_distribuidas_str + ')' + '\n‣ Administradas: ' + new_administradas + ' (' + diff_administradas_str
-                 + ')' + '\n‣ Completas: ' + new_completas + '(' + diff_completas_str + ')' + '\n\n' +
+                 + ')' + '\n‣ Completas: ' + new_completas + ' (' + diff_completas_str + ')' + '\n\n' +
                  'Población inmunizada: {:.2f}%\n\n#COVID19España'.format(porcentaje_completas))
 
 # print(tweet_casos)
