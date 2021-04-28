@@ -3,11 +3,15 @@ from bs4 import BeautifulSoup
 import re
 from datetime import date
 from twython import Twython
+from twython import TwythonError
 from auth import ACCESS_TOKEN, ACCESS_TOKEN_SECRET, API_KEY, API_SECRET_KEY
+import logging
 
 URL_CASES = 'https://www.worldometers.info/coronavirus/country/spain/'
 URL_VACCINES = 'https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov/vacunaCovid19.htm'
 POBLACION_ESP = 47450795    # https://www.ine.es/jaxi/Tabla.htm?path=/t20/e245/p08/l0/&file=02003.px&L=0
+
+logging.basicConfig(filename='covid.log', level=logging.DEBUG)
 
 
 def get_vaccines():
@@ -53,8 +57,8 @@ new_cases, new_deaths = get_cases()
 
 new_distribuidas, new_administradas, new_completas = get_vaccines()
 
-old_cases = 0
-old_deaths = 0
+logging.debug("Cases and vaccines obtained")
+
 old_distribuidas = 0
 old_administradas = 0
 old_completas = 0
@@ -62,17 +66,11 @@ old_completas = 0
 with open('yesterday.txt', 'r') as f:
     lines = f.readlines()
 
-    old_cases = int(lines[0].strip().replace('.', ''))
-    old_deaths = int(lines[1].strip().replace('.', ''))
-    old_distribuidas = int(lines[2].strip().replace('.', ''))
-    old_administradas = int(lines[3].strip().replace('.', ''))
-    old_completas = int(lines[4].strip().replace('.', ''))
+    old_distribuidas = int(lines[0].strip().replace('.', ''))
+    old_administradas = int(lines[1].strip().replace('.', ''))
+    old_completas = int(lines[2].strip().replace('.', ''))
 
 with open('yesterday.txt', 'w') as f:
-    f.write(new_cases)
-    f.write('\n')
-    f.write(new_deaths)
-    f.write('\n')
     f.write(new_distribuidas)
     f.write('\n')
     f.write(new_administradas)
@@ -80,14 +78,13 @@ with open('yesterday.txt', 'w') as f:
     f.write(new_completas)
     f.write('\n')
 
-diff_cases = int(new_cases.replace('.', '')) - old_cases
-diff_deaths = int(new_deaths.replace('.', '')) - old_deaths
+logging.debug("Numbers for tomorrow statistics written in yesterday.txt")
+
 diff_distribuidas = int(new_distribuidas.replace('.', '')) - old_distribuidas
 diff_administradas = int(new_administradas.replace('.', '')) - old_administradas
 diff_completas = int(new_completas.replace('.', '')) - old_completas
 
-diff_cases_str = '+' + str(diff_cases) if diff_cases >= 0 else str(diff_cases)
-diff_deaths_str = '+' + str(diff_deaths) if diff_deaths >= 0 else str(diff_deaths)
+# No need to add the '-' symbol as it is already in the integer
 diff_distribuidas_str = '+' + str(diff_distribuidas) if diff_distribuidas >= 0 else str(diff_distribuidas)
 diff_administradas_str = '+' + str(diff_administradas) if diff_administradas >= 0 else str(diff_administradas)
 diff_completas_str = '+' + str(diff_completas) if diff_completas >= 0 else str(diff_completas)
@@ -106,6 +103,8 @@ tweet_vacunas = ('Información vacunas ' + day + ' 🇪🇸\n\n' + '‣ Vacunas 
                  + ')' + '\n‣ Completas: ' + new_completas + ' (' + diff_completas_str + ')' + '\n\n' +
                  'Población inmunizada: {:.2f}%\n\n#COVID19España'.format(porcentaje_completas))
 
+logging.debug("Tweets ready to send")
+
 # print(tweet_casos)
 # print('\n')
 # print(tweet_vacunas)
@@ -117,5 +116,10 @@ twitter = Twython(
     ACCESS_TOKEN_SECRET
 )
 
-twitter.update_status(status=tweet_casos)
-twitter.update_status(status=tweet_vacunas)
+try:
+    twitter.update_status(status=tweet_casos)
+    twitter.update_status(status=tweet_vacunas)
+except TwythonError as e:
+    logging.error("Error while sending the tweet: %s", e)
+else:
+    logging.debug("Tweets sent")
