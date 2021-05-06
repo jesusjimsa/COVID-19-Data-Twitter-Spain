@@ -53,6 +53,11 @@ def get_cases():
         return new_cases.replace(',', '.'), new_deaths
 
 
+def dot_in_string(value):
+    value = value[0] + '{:,}'.format(int(value[1:])).replace(',', '.')
+    return value
+
+
 new_cases, new_deaths = get_cases()
 
 new_distribuidas, new_administradas, new_completas = get_vaccines()
@@ -88,6 +93,10 @@ diff_completas = int(new_completas.replace('.', '')) - old_completas
 diff_distribuidas_str = '+' + str(diff_distribuidas) if diff_distribuidas >= 0 else str(diff_distribuidas)
 diff_administradas_str = '+' + str(diff_administradas) if diff_administradas >= 0 else str(diff_administradas)
 diff_completas_str = '+' + str(diff_completas) if diff_completas >= 0 else str(diff_completas)
+
+diff_distribuidas_str = dot_in_string(diff_distribuidas_str)
+diff_administradas_str = dot_in_string(diff_administradas_str)
+diff_completas_str = dot_in_string(diff_completas_str)
 
 porcentaje_completas = (int(new_completas.replace('.', '')) / POBLACION_ESP) * 100
 
