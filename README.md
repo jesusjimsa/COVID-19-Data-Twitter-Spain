@@ -1,5 +1,5 @@
 # COVID-19-Data-Twitter-Spain
-![img](img_twitter/covid-spain-twitter-cover.jpg)
+![img](img_twitter/profile/covid-spain-twitter-cover.jpg)
 Twitter bot to publish data about COVID-19 cases, deaths and vaccines on Twitter.
 
 ## Data sources
