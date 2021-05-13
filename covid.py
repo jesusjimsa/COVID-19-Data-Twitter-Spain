@@ -1,11 +1,12 @@
 import requests
-from bs4 import BeautifulSoup
+import logging
+import sys
 import re
-from datetime import date
+from bs4 import BeautifulSoup
+from datetime import date, datetime
 from twython import Twython
 from twython import TwythonError
 from auth import ACCESS_TOKEN, ACCESS_TOKEN_SECRET, API_KEY, API_SECRET_KEY
-import logging
 
 URL_CASES = 'https://www.worldometers.info/coronavirus/country/spain/'
 URL_VACCINES = 'https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov/vacunaCovid19.htm'
@@ -57,6 +58,11 @@ def dot_in_string(value):
     value = value[0] + '{:,}'.format(int(value[1:])).replace(',', '.')
     return value
 
+
+# There is no new info posted on weekends so there is no need to create a tweet
+if datetime.today().weekday() in [5, 6]:
+    logging.debug("No info needs to be posted on weekends")
+    sys.exit()
 
 new_cases, new_deaths = get_cases()
 
