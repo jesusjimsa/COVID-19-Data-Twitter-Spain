@@ -216,3 +216,4 @@ API_SECRET_KEY
 BEARER_TOKEN
 auth.py
 covid-spain-twitter-machine.pem
+today_cases.jpg
