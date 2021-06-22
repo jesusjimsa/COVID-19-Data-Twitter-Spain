@@ -5,6 +5,7 @@ from twython import Twython
 from twython import TwythonError
 from auth import ACCESS_TOKEN, ACCESS_TOKEN_SECRET, API_KEY, API_SECRET_KEY
 from get_data import get_vaccines, get_cases
+from tweet_image import generate_cases_image
 
 POBLACION_ESP = 47450795    # https://www.ine.es/jaxi/Tabla.htm?path=/t20/e245/p08/l0/&file=02003.px&L=0
 
@@ -74,6 +75,15 @@ tweet_vacunas = ('Información vacunas ' + day + ' 🇪🇸\n\n' + '‣ Vacunas 
                  + ')' + '\n‣ Completas: ' + new_completas + ' (' + diff_completas_str + ')' + '\n\n' +
                  'Población inmunizada: {:.2f}%\n\n#COVID19España'.format(porcentaje_completas))
 
+logging.debug("Starting to generate the cases image")
+
+try:
+    generate_cases_image(new_cases, new_deaths)
+except OSError:
+    logging.error("Couldn't generate the cases image")
+else:
+    logging.debug("Cases image ready")
+
 logging.debug("Tweets ready to send")
 
 # print(tweet_casos)
@@ -87,8 +97,21 @@ twitter = Twython(
     ACCESS_TOKEN_SECRET
 )
 
+logging.debug("Attempt to upload the cases image")
+
 try:
-    twitter.update_status(status=tweet_casos)
+    cases_image = open('today_cases.jpg', 'rb')
+    image_ids = twitter.upload_media(media=cases_image)
+    cases_image.close()
+except OSError:
+    logging.error("Couldn't open the cases image")
+except TwythonError as e:
+    logging.error("Couldn't upload the cases image: %s", e)
+else:
+    logging.debug("Cases image uploaded succesfuly")
+
+try:
+    twitter.update_status(status=tweet_casos, media_ids=image_ids['media_id'])
     twitter.update_status(status=tweet_vacunas)
 except TwythonError as e:
     logging.error("Error while sending the tweet: %s", e)
