@@ -1,57 +1,14 @@
-import requests
 import logging
 import sys
-import re
-from bs4 import BeautifulSoup
 from datetime import date, datetime
 from twython import Twython
 from twython import TwythonError
 from auth import ACCESS_TOKEN, ACCESS_TOKEN_SECRET, API_KEY, API_SECRET_KEY
+from get_data import get_vaccines, get_cases
 
-URL_CASES = 'https://www.worldometers.info/coronavirus/country/spain/'
-URL_VACCINES = 'https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov/vacunaCovid19.htm'
 POBLACION_ESP = 47450795    # https://www.ine.es/jaxi/Tabla.htm?path=/t20/e245/p08/l0/&file=02003.px&L=0
 
 logging.basicConfig(filename='covid.log', level=logging.DEBUG)
-
-
-def get_vaccines():
-    re_cifra = r'.*\"cifra\">(.*)</p>'
-    page_vaccines = requests.get(URL_VACCINES)
-    soup_vaccines = BeautifulSoup(page_vaccines.content, 'html.parser')
-
-    result_distribuidas = soup_vaccines.find(class_='banner-coronavirus banner-distribuidas')
-    match_distribuida = re.match(re_cifra, str(result_distribuidas).replace('\n', ''))
-    distribuidas = match_distribuida.group(1)
-
-    result_administradas = soup_vaccines.find(class_='banner-coronavirus banner-vacunas')
-    match_administrada = re.match(re_cifra, str(result_administradas).replace('\n', ''))
-    administradas = match_administrada.group(1)
-
-    result_completas = soup_vaccines.find(class_='banner-coronavirus banner-completas')
-    match_completa = re.match(re_cifra, str(result_completas).replace('\n', ''))
-    completas = match_completa.group(1)
-
-    return distribuidas, administradas, completas
-
-
-def get_cases():
-    page_cases = requests.get(URL_CASES)
-    soup_cases = BeautifulSoup(page_cases.content, 'html.parser')
-
-    results_cases = soup_cases.find(id='news_block')
-
-    latest_cases = results_cases.find_all('li', class_='news_li')[0]
-
-    new_cases_re = r'.*<strong>(.*) new cases</strong> and <strong>(.*) new deaths</strong>.*'
-
-    match = re.match(new_cases_re, str(latest_cases))
-
-    if (match):
-        new_cases = match.group(1)
-        new_deaths = match.group(2)
-
-        return new_cases.replace(',', '.'), new_deaths
 
 
 def dot_in_string(value):
@@ -107,7 +64,6 @@ diff_completas_str = dot_in_string(diff_completas_str)
 porcentaje_completas = (int(new_completas.replace('.', '')) / POBLACION_ESP) * 100
 
 today = date.today()
-
 day = today.strftime("%d/%m/%Y")
 
 tweet_casos = ('Información COVID-19 ' + day + ' 🇪🇸\n\n' + '‣ Casos: ' + new_cases + '\n‣ Fallecimientos: ' + new_deaths
