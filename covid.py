@@ -5,7 +5,7 @@ from twython import Twython
 from twython import TwythonError
 from auth import ACCESS_TOKEN, ACCESS_TOKEN_SECRET, API_KEY, API_SECRET_KEY
 from get_data import get_vaccines, get_cases
-from tweet_image import generate_cases_image
+from tweet_image import generate_cases_image, generate_vaccine_image
 
 POBLACION_ESP = 47450795    # https://www.ine.es/jaxi/Tabla.htm?path=/t20/e245/p08/l0/&file=02003.px&L=0
 
@@ -62,6 +62,7 @@ diff_distribuidas_str = dot_in_string(diff_distribuidas_str)
 diff_administradas_str = dot_in_string(diff_administradas_str)
 diff_completas_str = dot_in_string(diff_completas_str)
 
+porcentaje_administradas = (int(new_administradas.replace('.', '')) / POBLACION_ESP) * 100
 porcentaje_completas = (int(new_completas.replace('.', '')) / POBLACION_ESP) * 100
 
 today = date.today()
@@ -76,6 +77,8 @@ tweet_vacunas = ('Información vacunas ' + day + ' 🇪🇸\n\n' + '‣ Vacunas 
                  'Población inmunizada: {:.2f}%\n\n#COVID19España'.format(porcentaje_completas))
 
 logging.debug("Starting to generate the cases image")
+
+generate_vaccine_image(porcentaje_administradas, porcentaje_completas)
 
 try:
     generate_cases_image(new_cases, new_deaths)
