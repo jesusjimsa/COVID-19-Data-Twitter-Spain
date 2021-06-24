@@ -62,7 +62,8 @@ diff_distribuidas_str = dot_in_string(diff_distribuidas_str)
 diff_administradas_str = dot_in_string(diff_administradas_str)
 diff_completas_str = dot_in_string(diff_completas_str)
 
-porcentaje_administradas = (int(new_administradas.replace('.', '')) / POBLACION_ESP) * 100
+porcentaje_primera = (((int(new_administradas.replace('.', '')) - int(new_completas.replace('.', ''))) / POBLACION_ESP)
+                      * 100)
 porcentaje_completas = (int(new_completas.replace('.', '')) / POBLACION_ESP) * 100
 
 today = date.today()
@@ -78,14 +79,25 @@ tweet_vacunas = ('Información vacunas ' + day + ' 🇪🇸\n\n' + '‣ Vacunas 
 
 logging.debug("Starting to generate the cases image")
 
-generate_vaccine_image(porcentaje_administradas, porcentaje_completas)
-
 try:
     generate_cases_image(new_cases, new_deaths)
 except OSError:
     logging.error("Couldn't generate the cases image")
 else:
     logging.debug("Cases image ready")
+
+logging.debug("Starting to generate the vaccines image")
+
+text_primera_dosis = dot_in_string(str((int(new_administradas.replace('.', '')) -
+                                        int(new_completas.replace('.', ''))))) + ' ({:.2f}%)'.format(porcentaje_primera)
+text_completa = new_completas + ' ({:.2f}%)'.format(porcentaje_completas)
+
+try:
+    generate_vaccine_image(porcentaje_primera, text_primera_dosis, porcentaje_completas, text_completa, day)
+except OSError:
+    logging.error("Couldn't generate the vaccines image")
+else:
+    logging.debug("Vaccines image ready")
 
 logging.debug("Tweets ready to send")
 
@@ -100,23 +112,30 @@ twitter = Twython(
     ACCESS_TOKEN_SECRET
 )
 
-logging.debug("Attempt to upload the cases image")
+logging.debug("Attempt to send the tweets")
+
+# TODO: This can be done in a function, it's repeating code now
 
 try:
     cases_image = open('today_cases.jpg', 'rb')
     image_ids = twitter.upload_media(media=cases_image)
     cases_image.close()
+    twitter.update_status(status=tweet_casos, media_ids=image_ids['media_id'])
 except OSError:
     logging.error("Couldn't open the cases image")
 except TwythonError as e:
-    logging.error("Couldn't upload the cases image: %s", e)
+    logging.error("Couldn't send the cases tweet: %s", e)
 else:
-    logging.debug("Cases image uploaded succesfuly")
+    logging.debug("Cases tweet sent succesfully")
 
 try:
-    twitter.update_status(status=tweet_casos, media_ids=image_ids['media_id'])
+    vaccine_image = open('vaccines_today.jpg', 'rb')
+    image_ids = twitter.upload_media(media=vaccine_image)
+    vaccine_image.close()
     twitter.update_status(status=tweet_vacunas)
+except OSError:
+    logging.error("Couldn't open the vaccines image")
 except TwythonError as e:
-    logging.error("Error while sending the tweet: %s", e)
+    logging.error("Couldn't send the vaccines tweet: %s", e)
 else:
-    logging.debug("Tweets sent")
+    logging.debug("Vaccines tweet sent succesfully")

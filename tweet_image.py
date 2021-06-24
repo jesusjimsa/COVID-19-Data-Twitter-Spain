@@ -3,6 +3,8 @@ import logging
 
 try:
     title_font = ImageFont.truetype('img_twitter/Roboto-Light.ttf', 90)
+    title_font_small = ImageFont.truetype('img_twitter/Roboto-Light.ttf', 50)
+    title_font_smaller = ImageFont.truetype('img_twitter/Roboto-Light.ttf', 40)
 except OSError:
     logging.error("Couldn't open the font file")
 
@@ -46,8 +48,22 @@ def generate_cases_image(cases, deaths):
     cases_image.close()
 
 
-def generate_vaccine_image(porcentaje_administradas, porcentaje_completas):
+def generate_vaccine_image(porcentaje_primera, text_primera, porcentaje_completas, text_completa, fecha):
     progressBar('img_twitter/vaccines_template.jpg', (215, 215, 215), 'orange', 25, 190, 1100, 50,
-                porcentaje_administradas / 100, 'vaccines_today.jpg')
-    progressBar('img_twitter/vaccines_template.jpg', (215, 215, 215), 'orange', 25, 400, 1100, 50,
+                porcentaje_primera / 100, 'vaccines_today.jpg')
+    progressBar('vaccines_today.jpg', (215, 215, 215), 'orange', 25, 400, 1100, 50,
                 porcentaje_completas / 100, 'vaccines_today.jpg')
+
+    vaccine_image = Image.open('vaccines_today.jpg')
+
+    vaccine_img_editable = ImageDraw.Draw(vaccine_image)
+    vaccine_img_editable.text((vaccine_image.width - 300, 5), fecha, (0, 0, 0),
+                              font=title_font_small)
+    vaccine_img_editable.text((vaccine_image.width / 5, vaccine_image.height / 2 - 220), text_primera, (0, 0, 0),
+                              font=title_font_smaller)
+    vaccine_img_editable.text((vaccine_image.width / 4 - 20, vaccine_image.height / 2 - 28), text_completa, (0, 0, 0),
+                              font=title_font_smaller)
+
+    vaccine_image.save('vaccines_today.jpg')
+
+    vaccine_image.close()
