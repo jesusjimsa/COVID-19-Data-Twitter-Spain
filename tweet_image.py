@@ -3,8 +3,35 @@ import logging
 
 try:
     title_font = ImageFont.truetype('img_twitter/Roboto-Light.ttf', 90)
+    title_font_small = ImageFont.truetype('img_twitter/Roboto-Light.ttf', 50)
+    title_font_smaller = ImageFont.truetype('img_twitter/Roboto-Light.ttf', 40)
 except OSError:
     logging.error("Couldn't open the font file")
+
+
+def progressBar(img_path, bgcolor, color, x, y, w, h, progress, save_path):
+    im = Image.open(img_path)
+    drawObject = ImageDraw.Draw(im)
+
+    '''BG'''
+    drawObject.ellipse((x + w, y, x + h + w, y + h), fill=bgcolor)
+    drawObject.ellipse((x, y, x + h, y + h), fill=bgcolor)
+    drawObject.rectangle((x + (h / 2), y, x + w + (h / 2), y + h), fill=bgcolor)
+
+    '''PROGRESS'''
+    if(progress <= 0):
+        progress = 0.01
+
+    if(progress > 1):
+        progress = 1
+
+    w = w * progress
+    drawObject.ellipse((x + w, y, x + h + w, y + h), fill=color)
+    drawObject.ellipse((x, y, x + h, y + h), fill=color)
+    drawObject.rectangle((x + (h / 2), y, x + w + (h / 2), y + h), fill=color)
+
+    '''SAVE'''
+    im.save(save_path)
 
 
 def generate_cases_image(cases, deaths):
@@ -19,3 +46,24 @@ def generate_cases_image(cases, deaths):
     cases_image.save('today_cases.jpg')
 
     cases_image.close()
+
+
+def generate_vaccine_image(porcentaje_primera, text_primera, porcentaje_completas, text_completa, fecha):
+    progressBar('img_twitter/vaccines_template.jpg', (215, 215, 215), 'orange', 25, 190, 1100, 50,
+                porcentaje_primera / 100, 'vaccines_today.jpg')
+    progressBar('vaccines_today.jpg', (215, 215, 215), 'orange', 25, 400, 1100, 50,
+                porcentaje_completas / 100, 'vaccines_today.jpg')
+
+    vaccine_image = Image.open('vaccines_today.jpg')
+
+    vaccine_img_editable = ImageDraw.Draw(vaccine_image)
+    vaccine_img_editable.text((vaccine_image.width - 300, 5), fecha, (0, 0, 0),
+                              font=title_font_small)
+    vaccine_img_editable.text((vaccine_image.width / 5, vaccine_image.height / 2 - 220), text_primera, (0, 0, 0),
+                              font=title_font_smaller)
+    vaccine_img_editable.text((vaccine_image.width / 4 - 20, vaccine_image.height / 2 - 28), text_completa, (0, 0, 0),
+                              font=title_font_smaller)
+
+    vaccine_image.save('vaccines_today.jpg')
+
+    vaccine_image.close()
