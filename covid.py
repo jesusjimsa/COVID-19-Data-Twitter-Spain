@@ -1,11 +1,9 @@
 import logging
 import sys
 from datetime import date, datetime
-from twython import Twython
-from twython import TwythonError
-from auth import ACCESS_TOKEN, ACCESS_TOKEN_SECRET, API_KEY, API_SECRET_KEY
 from get_data import get_vaccines, get_cases
 from tweet_image import generate_cases_image, generate_vaccine_image
+from send_tweet import send_tweet
 
 POBLACION_ESP = 47450795    # https://www.ine.es/jaxi/Tabla.htm?path=/t20/e245/p08/l0/&file=02003.px&L=0
 
@@ -105,37 +103,7 @@ logging.debug("Tweets ready to send")
 # print('\n')
 # print(tweet_vacunas)
 
-twitter = Twython(
-    API_KEY,
-    API_SECRET_KEY,
-    ACCESS_TOKEN,
-    ACCESS_TOKEN_SECRET
-)
-
 logging.debug("Attempt to send the tweets")
 
-# TODO: This can be done in a function, it's repeating code now
-
-try:
-    cases_image = open('today_cases.jpg', 'rb')
-    image_ids = twitter.upload_media(media=cases_image)
-    cases_image.close()
-    twitter.update_status(status=tweet_casos, media_ids=image_ids['media_id'])
-except OSError:
-    logging.error("Couldn't open the cases image")
-except TwythonError as e:
-    logging.error("Couldn't send the cases tweet: %s", e)
-else:
-    logging.debug("Cases tweet sent succesfully")
-
-try:
-    vaccine_image = open('vaccines_today.jpg', 'rb')
-    image_ids = twitter.upload_media(media=vaccine_image)
-    vaccine_image.close()
-    twitter.update_status(status=tweet_vacunas)
-except OSError:
-    logging.error("Couldn't open the vaccines image")
-except TwythonError as e:
-    logging.error("Couldn't send the vaccines tweet: %s", e)
-else:
-    logging.debug("Vaccines tweet sent succesfully")
+send_tweet(tweet_casos, 'today_cases.jpg')
+send_tweet(tweet_vacunas, 'vaccines_today.jpg')
