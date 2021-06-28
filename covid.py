@@ -4,16 +4,11 @@ from datetime import date, datetime
 from get_data import get_vaccines, get_cases
 from tweet_image import generate_cases_image, generate_vaccine_image
 from send_tweet import send_tweet
+from prepare_data import dot_in_string, str_with_plus_symbol, read_yesterday_data, write_in_yesterday
 
 POBLACION_ESP = 47450795    # https://www.ine.es/jaxi/Tabla.htm?path=/t20/e245/p08/l0/&file=02003.px&L=0
 
 logging.basicConfig(filename='covid.log', level=logging.DEBUG)
-
-
-def dot_in_string(value):
-    value = value[0] + '{:,}'.format(int(value[1:])).replace(',', '.')
-    return value
-
 
 # There is no new info posted on weekends so there is no need to create a tweet
 if datetime.today().weekday() in [5, 6]:
@@ -21,48 +16,27 @@ if datetime.today().weekday() in [5, 6]:
     sys.exit()
 
 new_cases, new_deaths = get_cases()
-
-new_distribuidas, new_administradas, new_completas = get_vaccines()
+new_distributed, new_administered, new_completed = get_vaccines()
 
 logging.debug("Cases and vaccines obtained")
 
-old_distribuidas = 0
-old_administradas = 0
-old_completas = 0
+old_distributed, old_administered, old_completed = read_yesterday_data()
 
-with open('yesterday.txt', 'r') as f:
-    lines = f.readlines()
-
-    old_distribuidas = int(lines[0].strip().replace('.', ''))
-    old_administradas = int(lines[1].strip().replace('.', ''))
-    old_completas = int(lines[2].strip().replace('.', ''))
-
-with open('yesterday.txt', 'w') as f:
-    f.write(new_distribuidas)
-    f.write('\n')
-    f.write(new_administradas)
-    f.write('\n')
-    f.write(new_completas)
-    f.write('\n')
+write_in_yesterday(new_distributed, new_administered, new_completed)
 
 logging.debug("Numbers for tomorrow statistics written in yesterday.txt")
 
-diff_distribuidas = int(new_distribuidas.replace('.', '')) - old_distribuidas
-diff_administradas = int(new_administradas.replace('.', '')) - old_administradas
-diff_completas = int(new_completas.replace('.', '')) - old_completas
+diff_distributed = int(new_distributed.replace('.', '')) - old_distributed
+diff_administered = int(new_administered.replace('.', '')) - old_administered
+diff_completed = int(new_completed.replace('.', '')) - old_completed
 
-# No need to add the '-' symbol as it is already in the integer
-diff_distribuidas_str = '+' + str(diff_distribuidas) if diff_distribuidas >= 0 else str(diff_distribuidas)
-diff_administradas_str = '+' + str(diff_administradas) if diff_administradas >= 0 else str(diff_administradas)
-diff_completas_str = '+' + str(diff_completas) if diff_completas >= 0 else str(diff_completas)
+diff_distributed_str = dot_in_string(str_with_plus_symbol(diff_distributed))
+diff_administered_str = dot_in_string(str_with_plus_symbol(diff_administered))
+diff_completed_str = dot_in_string(str_with_plus_symbol(diff_completed))
 
-diff_distribuidas_str = dot_in_string(diff_distribuidas_str)
-diff_administradas_str = dot_in_string(diff_administradas_str)
-diff_completas_str = dot_in_string(diff_completas_str)
-
-porcentaje_primera = (((int(new_administradas.replace('.', '')) - int(new_completas.replace('.', ''))) / POBLACION_ESP)
-                      * 100)
-porcentaje_completas = (int(new_completas.replace('.', '')) / POBLACION_ESP) * 100
+percentage_first = (((int(new_administered.replace('.', '')) - int(new_completed.replace('.', ''))) / POBLACION_ESP)
+                    * 100)
+percentage_completed = (int(new_completed.replace('.', '')) / POBLACION_ESP) * 100
 
 today = date.today()
 day = today.strftime("%d/%m/%Y")
@@ -70,10 +44,10 @@ day = today.strftime("%d/%m/%Y")
 tweet_casos = ('Información COVID-19 ' + day + ' 🇪🇸\n\n' + '‣ Casos: ' + new_cases + '\n‣ Fallecimientos: ' + new_deaths
                + '\n\n#COVID19España')
 
-tweet_vacunas = ('Información vacunas ' + day + ' 🇪🇸\n\n' + '‣ Vacunas distribuidas: ' + new_distribuidas + ' (' +
-                 diff_distribuidas_str + ')' + '\n‣ Administradas: ' + new_administradas + ' (' + diff_administradas_str
-                 + ')' + '\n‣ Completas: ' + new_completas + ' (' + diff_completas_str + ')' + '\n\n' +
-                 'Población inmunizada: {:.2f}%\n\n#COVID19España'.format(porcentaje_completas))
+tweet_vacunas = ('Información vacunas ' + day + ' 🇪🇸\n\n' + '‣ Vacunas distribuidas: ' + new_distributed + ' (' +
+                 diff_distributed_str + ')' + '\n‣ Administradas: ' + new_administered + ' (' + diff_administered_str
+                 + ')' + '\n‣ Completas: ' + new_completed + ' (' + diff_completed_str + ')' + '\n\n' +
+                 'Población inmunizada: {:.2f}%\n\n#COVID19España'.format(percentage_completed))
 
 logging.debug("Starting to generate the cases image")
 
@@ -86,12 +60,12 @@ else:
 
 logging.debug("Starting to generate the vaccines image")
 
-text_primera_dosis = dot_in_string(str((int(new_administradas.replace('.', '')) -
-                                        int(new_completas.replace('.', ''))))) + ' ({:.2f}%)'.format(porcentaje_primera)
-text_completa = new_completas + ' ({:.2f}%)'.format(porcentaje_completas)
+text_primera_dosis = dot_in_string(str((int(new_administered.replace('.', '')) -
+                                        int(new_completed.replace('.', ''))))) + ' ({:.2f}%)'.format(percentage_first)
+text_completa = new_completed + ' ({:.2f}%)'.format(percentage_completed)
 
 try:
-    generate_vaccine_image(porcentaje_primera, text_primera_dosis, porcentaje_completas, text_completa, day)
+    generate_vaccine_image(percentage_first, text_primera_dosis, percentage_completed, text_completa, day)
 except OSError:
     logging.error("Couldn't generate the vaccines image")
 else:

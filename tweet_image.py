@@ -10,6 +10,30 @@ except OSError:
 
 
 def progressBar(img_path, bgcolor, color, x, y, w, h, progress, save_path):
+    '''
+    Add a progress bar with rounded corners to a given image.
+
+    Parameters
+    ----------
+    img_path : str
+        Path to image.
+    bgcolor : str, tuple or hex
+        Background color of the progress bar.
+    color : str, tuple or hex
+        Color of the progress in the bar.
+    x : int
+        Horizontal position.
+    y : int
+        Vertical position.
+    w : int
+        Width.
+    h : int
+        Height.
+    progress : float
+        Progress of the bar. Must be between 0 and 1.
+    save_path : str
+        Path to save the image with the progress bar.
+    '''
     im = Image.open(img_path)
     drawObject = ImageDraw.Draw(im)
 
@@ -35,6 +59,16 @@ def progressBar(img_path, bgcolor, color, x, y, w, h, progress, save_path):
 
 
 def generate_cases_image(cases, deaths):
+    '''
+    Add text for the cases and deaths image.
+
+    Parameters
+    ----------
+    cases : str
+        Number of cases to write in the image.
+    deaths : str
+        Number of deaths to write in the image.
+    '''
     cases_image = Image.open('img_twitter/cases_template.jpg')
 
     cases_img_editable = ImageDraw.Draw(cases_image)
@@ -48,20 +82,36 @@ def generate_cases_image(cases, deaths):
     cases_image.close()
 
 
-def generate_vaccine_image(porcentaje_primera, text_primera, porcentaje_completas, text_completa, fecha):
+def generate_vaccine_image(percentage_first, text_first, percentage_complete, text_complete, date):
+    '''
+    Add text and progress bars to the vaccines image.
+
+    Parameters
+    ----------
+    percentage_first : float
+        Percentage of people with first dose.
+    text_first : str
+        Text that includes the number of first doses and the percentage.
+    percentage_complete : float
+        Percentage of people with both doses.
+    text_complete : str
+        Text that includes the number of complete doses and the percentage.
+    date : str
+        Date in text of the current day.
+    '''
     progressBar('img_twitter/vaccines_template.jpg', (215, 215, 215), 'orange', 25, 190, 1100, 50,
-                porcentaje_primera / 100, 'vaccines_today.jpg')
+                percentage_first / 100, 'vaccines_today.jpg')
     progressBar('vaccines_today.jpg', (215, 215, 215), 'orange', 25, 400, 1100, 50,
-                porcentaje_completas / 100, 'vaccines_today.jpg')
+                percentage_complete / 100, 'vaccines_today.jpg')
 
     vaccine_image = Image.open('vaccines_today.jpg')
 
     vaccine_img_editable = ImageDraw.Draw(vaccine_image)
-    vaccine_img_editable.text((vaccine_image.width - 300, 5), fecha, (0, 0, 0),
+    vaccine_img_editable.text((vaccine_image.width - 300, 5), date, (0, 0, 0),
                               font=title_font_small)
-    vaccine_img_editable.text((vaccine_image.width / 5, vaccine_image.height / 2 - 220), text_primera, (0, 0, 0),
+    vaccine_img_editable.text((vaccine_image.width / 5, vaccine_image.height / 2 - 220), text_first, (0, 0, 0),
                               font=title_font_smaller)
-    vaccine_img_editable.text((vaccine_image.width / 4 - 20, vaccine_image.height / 2 - 28), text_completa, (0, 0, 0),
+    vaccine_img_editable.text((vaccine_image.width / 4 - 20, vaccine_image.height / 2 - 28), text_complete, (0, 0, 0),
                               font=title_font_smaller)
 
     vaccine_image.save('vaccines_today.jpg')
