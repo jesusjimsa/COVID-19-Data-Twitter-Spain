@@ -41,13 +41,13 @@ percentage_completed = (int(new_completed.replace('.', '')) / POBLACION_ESP) * 1
 today = date.today()
 day = today.strftime("%d/%m/%Y")
 
-tweet_casos = ('Información COVID-19 ' + day + ' 🇪🇸\n\n' + '‣ Casos: ' + new_cases + '\n‣ Fallecimientos: ' + new_deaths
+tweet_cases = ('Información COVID-19 ' + day + ' 🇪🇸\n\n' + '‣ Casos: ' + new_cases + '\n‣ Fallecimientos: ' + new_deaths
                + '\n\n#COVID19España')
 
-tweet_vacunas = ('Información vacunas ' + day + ' 🇪🇸\n\n' + '‣ Vacunas distribuidas: ' + new_distributed + ' (' +
-                 diff_distributed_str + ')' + '\n‣ Administradas: ' + new_administered + ' (' + diff_administered_str
-                 + ')' + '\n‣ Completas: ' + new_completed + ' (' + diff_completed_str + ')' + '\n\n' +
-                 'Población inmunizada: {:.2f}%\n\n#COVID19España'.format(percentage_completed))
+tweet_vaccines = ('Información vacunas ' + day + ' 🇪🇸\n\n' + '‣ Vacunas distribuidas: ' + new_distributed + ' (' +
+                  diff_distributed_str + ')' + '\n‣ Administradas: ' + new_administered + ' (' + diff_administered_str
+                  + ')' + '\n‣ Completas: ' + new_completed + ' (' + diff_completed_str + ')' + '\n\n' +
+                  'Población inmunizada: {:.2f}%\n\n#COVID19España'.format(percentage_completed))
 
 logging.debug("Starting to generate the cases image")
 
@@ -73,11 +73,11 @@ else:
 
 logging.debug("Tweets ready to send")
 
-# print(tweet_casos)
+# print(tweet_cases)
 # print('\n')
-# print(tweet_vacunas)
+# print(tweet_vaccines)
 
 logging.debug("Attempt to send the tweets")
 
-send_tweet(tweet_casos, 'today_cases.jpg')
-send_tweet(tweet_vacunas, 'vaccines_today.jpg')
+send_tweet(tweet_cases, 'today_cases.jpg')
+send_tweet(tweet_vaccines, 'vaccines_today.jpg')
