@@ -10,26 +10,48 @@ logging.basicConfig(filename='covid.log', level=logging.DEBUG)
 
 
 def get_vaccines():
-    re_cifra = r'.*\"cifra\">(.*)</p>'
+    '''
+    Get data about vaccination in Spain.
+
+    Returns
+    -------
+    distributed : str
+        Number of vaccines distributed to Spain.
+    administered : str
+        Number of vaccines administered in Spain.
+    completed : str
+        Number of second doses administered in Spain.
+    '''
+    re_number = r'.*\"cifra\">(.*)</p>'
     page_vaccines = requests.get(URL_VACCINES)
     soup_vaccines = BeautifulSoup(page_vaccines.content, 'html.parser')
 
-    result_distribuidas = soup_vaccines.find(class_='banner-coronavirus banner-distribuidas')
-    match_distribuida = re.match(re_cifra, str(result_distribuidas).replace('\n', ''))
-    distribuidas = match_distribuida.group(1)
+    result_distributed = soup_vaccines.find(class_='banner-coronavirus banner-distribuidas')
+    match_distributed = re.match(re_number, str(result_distributed).replace('\n', ''))
+    distributed = match_distributed.group(1)
 
-    result_administradas = soup_vaccines.find(class_='banner-coronavirus banner-vacunas')
-    match_administrada = re.match(re_cifra, str(result_administradas).replace('\n', ''))
-    administradas = match_administrada.group(1)
+    result_administered = soup_vaccines.find(class_='banner-coronavirus banner-vacunas')
+    match_administered = re.match(re_number, str(result_administered).replace('\n', ''))
+    administered = match_administered.group(1)
 
-    result_completas = soup_vaccines.find(class_='banner-coronavirus banner-completas')
-    match_completa = re.match(re_cifra, str(result_completas).replace('\n', ''))
-    completas = match_completa.group(1)
+    result_completed = soup_vaccines.find(class_='banner-coronavirus banner-completas')
+    match_completed = re.match(re_number, str(result_completed).replace('\n', ''))
+    completed = match_completed.group(1)
 
-    return distribuidas, administradas, completas
+    return distributed, administered, completed
 
 
 def get_cases():
+    '''
+    Get data about new cases and deaths in Spain.
+
+    Returns
+    -------
+    new_cases : str
+        Number of new cases of COVID-19 in Spain.
+    new_deaths : str
+        Number of new deaths due to COVID-19 in Spain.
+    '''
     page_cases = requests.get(URL_CASES)
     soup_cases = BeautifulSoup(page_cases.content, 'html.parser')
 
