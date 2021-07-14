@@ -46,11 +46,11 @@ def read_yesterday_data():
     Returns
     -------
     old_distributed : int
-        Number read from 'yesterday.txt' referring to distributed vaccines
+        Number read from 'yesterday.txt' referring to distributed vaccines.
     old_administered : int
-        Number read from 'yesterday.txt' referring to administered vaccines
+        Number read from 'yesterday.txt' referring to administered vaccines.
     old_completed : int
-        Number read from 'yesterday.txt' referring to completed vaccines
+        Number read from 'yesterday.txt' referring to completed vaccines.
     '''
     old_distributed = 0
     old_administered = 0
@@ -76,11 +76,11 @@ def write_in_yesterday(distributed, administered, complete):
     Parameters
     ----------
     distributed : str
-        Distributed vaccines to be written in 'yesterday.txt'
+        Distributed vaccines to be written in 'yesterday.txt'.
     administered : str
-        Administered vaccines to be written in 'yesterday.txt'
+        Administered vaccines to be written in 'yesterday.txt'.
     complete : str
-        Completed vaccines to be written in 'yesterday.txt'
+        Completed vaccines to be written in 'yesterday.txt'.
     '''
     try:
         with open('yesterday.txt', 'w') as f:
@@ -92,3 +92,47 @@ def write_in_yesterday(distributed, administered, complete):
             f.write('\n')
     except OSError:
         logging.error("Could not write data into 'yesterday.txt'")
+
+
+def read_from_last_cases():
+    '''
+    Get cases and deaths info from last day from file 'last_cases.txt'.
+
+    Returns
+    -------
+    last_cases : str
+        Number of COVID-19 cases in Spain the last day.
+    last_cases : str
+        Number of COVID-19 deaths in Spain the last day.
+    '''
+    try:
+        with open('last_cases.txt', 'r') as f:
+            lines = f.readlines()
+
+            last_cases = lines[0].strip().replace(',', '.')
+            last_deaths = lines[1].strip().replace(',', '.')
+
+            return last_cases, last_deaths
+    except OSError:
+        logging.error("Could not read data from 'last_cases.txt")
+
+
+def write_last_cases(new_cases, new_deaths):
+    '''
+    Write cases and deaths info from today in 'last_cases.txt'.
+
+    Parameters
+    -------
+    new_cases : str
+        Number of COVID-19 cases in Spain today.
+    new_deaths : str
+        Number of COVID-19 deaths in Spain today.
+    '''
+    try:
+        with open('last_cases.txt', 'w') as f:
+            f.write(new_cases)
+            f.write('\n')
+            f.write(new_deaths)
+            f.write('\n')
+    except OSError:
+        logging.error("Could not write data into 'last_cases.txt'")
