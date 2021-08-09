@@ -17,8 +17,7 @@ def dot_in_string(value):
     value : str
         Number with commas replaced by dots.
     '''
-    value = value[0] + '{:,}'.format(int(value[1:])).replace(',', '.')
-    return value
+    return '{:,}'.format(int(value)).replace(',', '.')
 
 
 def str_with_plus_symbol(value):
