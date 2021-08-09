@@ -1,10 +1,13 @@
 import requests
 import logging
+import json
 import re
 from bs4 import BeautifulSoup
 
 URL_CASES = 'https://www.worldometers.info/coronavirus/country/spain/'
-URL_VACCINES = 'https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov/vacunaCovid19.htm'
+URL_VACCINES = 'https://covid-vacuna.app/data/latest.json'
+
+TOTAL_JSON_POSITION = 21
 
 logging.basicConfig(filename='covid.log', level=logging.DEBUG)
 
@@ -22,21 +25,15 @@ def get_vaccines():
     completed : str
         Number of second doses administered in Spain.
     '''
-    re_number = r'.*\"cifra\">(.*)</p>'
-    page_vaccines = requests.get(URL_VACCINES)
-    soup_vaccines = BeautifulSoup(page_vaccines.content, 'html.parser')
+    json_vaccines = requests.get(URL_VACCINES)
 
-    result_distributed = soup_vaccines.find(class_='banner-coronavirus banner-distribuidas')
-    match_distributed = re.match(re_number, str(result_distributed).replace('\n', ''))
-    distributed = match_distributed.group(1)
+    open('latest.json', 'wb').write(json_vaccines.content)
+    json_file = open('latest.json', 'r')
+    json_info = json.load(json_file)
 
-    result_administered = soup_vaccines.find(class_='banner-coronavirus banner-vacunas')
-    match_administered = re.match(re_number, str(result_administered).replace('\n', ''))
-    administered = match_administered.group(1)
-
-    result_completed = soup_vaccines.find(class_='banner-coronavirus banner-completas')
-    match_completed = re.match(re_number, str(result_completed).replace('\n', ''))
-    completed = match_completed.group(1)
+    distributed = str(json_info[TOTAL_JSON_POSITION]['dosisEntregadas'])
+    administered = str(json_info[TOTAL_JSON_POSITION]['dosisPrimeraDosis'])
+    completed = str(json_info[TOTAL_JSON_POSITION]['dosisPautaCompletada'])
 
     return distributed, administered, completed
 
