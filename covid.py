@@ -1,6 +1,8 @@
 import logging
 import sys
+import json
 from datetime import date, datetime
+from time import sleep
 from get_data import get_vaccines, get_cases
 from tweet_image import generate_cases_image, generate_vaccine_image
 from send_tweet import send_tweet
@@ -81,5 +83,19 @@ logging.debug("Tweets ready to send")
 
 logging.debug("Attempt to send the tweets")
 
-send_tweet(tweet_cases, 'today_cases.jpg')
-send_tweet(tweet_vaccines, 'vaccines_today.jpg')
+send_tweet(tweet_cases, image_path='today_cases.jpg')
+tweet_response = send_tweet(tweet_vaccines, image_path='vaccines_today.jpg')
+
+json_file = open('latest.json', 'r')
+json_info = json.load(json_file)
+json_file.close()
+
+for i in range(0, 19):
+    community_tweet = ('Vacunación en ' + json_info[i]['ccaa'] + '\n\n‣ Primera dosis: ' +
+                       dot_in_string(str(json_info[i]['dosisPrimeraDosis'])) +
+                       ' ({:.2f}%)'.format(json_info[i]['porcentajePoblacionPrimeraDosis'] * 100) +
+                       '\n‣ Segunda dosis: ' + dot_in_string(str(json_info[i]['dosisPautaCompletada'])) +
+                       ' ({:.2f}%)'.format(json_info[i]['porcentajePoblacionCompletas'] * 100))
+
+    sleep(1)    # Sleep one second to prevent suspension because of spam
+    tweet_response = send_tweet(community_tweet, in_reply_to_id=tweet_response['id_str'])

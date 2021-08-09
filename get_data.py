@@ -30,6 +30,7 @@ def get_vaccines():
     open('latest.json', 'wb').write(json_vaccines.content)
     json_file = open('latest.json', 'r')
     json_info = json.load(json_file)
+    json_file.close()
 
     distributed = str(json_info[TOTAL_JSON_POSITION]['dosisEntregadas'])
     administered = str(json_info[TOTAL_JSON_POSITION]['dosisPrimeraDosis'])
