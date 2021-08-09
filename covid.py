@@ -16,26 +16,29 @@ if datetime.today().weekday() in [5, 6]:
     sys.exit()
 
 new_cases, new_deaths = get_cases()
-new_distributed, new_administered, new_completed = get_vaccines()
+new_distributed, new_first_dose, new_completed = get_vaccines()
+
+new_distributed = dot_in_string(new_distributed)
+new_first_dose = dot_in_string(new_first_dose)
+new_completed = dot_in_string(new_completed)
 
 logging.debug("Cases and vaccines obtained")
 
-old_distributed, old_administered, old_completed = read_yesterday_data()
+old_distributed, old_first_dose, old_completed = read_yesterday_data()
 
-write_in_yesterday(new_distributed, new_administered, new_completed)
+write_in_yesterday(new_distributed, new_first_dose, new_completed)
 
 logging.debug("Numbers for tomorrow statistics written in yesterday.txt")
 
 diff_distributed = int(new_distributed.replace('.', '')) - old_distributed
-diff_administered = int(new_administered.replace('.', '')) - old_administered
+diff_first_dose = int(new_first_dose.replace('.', '')) - old_first_dose
 diff_completed = int(new_completed.replace('.', '')) - old_completed
 
 diff_distributed_str = dot_in_string(str_with_plus_symbol(diff_distributed))
-diff_administered_str = dot_in_string(str_with_plus_symbol(diff_administered))
+diff_first_dose_str = dot_in_string(str_with_plus_symbol(diff_first_dose))
 diff_completed_str = dot_in_string(str_with_plus_symbol(diff_completed))
 
-percentage_first = (((int(new_administered.replace('.', '')) - int(new_completed.replace('.', ''))) / POBLACION_ESP)
-                    * 100)
+percentage_first = ((int(new_first_dose.replace('.', '')) / POBLACION_ESP) * 100)
 percentage_completed = (int(new_completed.replace('.', '')) / POBLACION_ESP) * 100
 
 today = date.today()
@@ -45,7 +48,7 @@ tweet_cases = ('Información COVID-19 ' + day + ' 🇪🇸\n\n' + '‣ Casos: ' 
                + '\n\n#COVID19España')
 
 tweet_vaccines = ('Información vacunas ' + day + ' 🇪🇸\n\n' + '‣ Vacunas distribuidas: ' + new_distributed + ' (' +
-                  diff_distributed_str + ')' + '\n‣ Administradas: ' + new_administered + ' (' + diff_administered_str
+                  diff_distributed_str + ')' + '\n‣ Una dosis: ' + new_first_dose + ' (' + diff_first_dose_str
                   + ')' + '\n‣ Completas: ' + new_completed + ' (' + diff_completed_str + ')' + '\n\n' +
                   'Población inmunizada: {:.2f}%\n\n#COVID19España'.format(percentage_completed))
 
@@ -60,8 +63,7 @@ else:
 
 logging.debug("Starting to generate the vaccines image")
 
-text_primera_dosis = dot_in_string(str((int(new_administered.replace('.', '')) -
-                                        int(new_completed.replace('.', ''))))) + ' ({:.2f}%)'.format(percentage_first)
+text_primera_dosis = dot_in_string(str(int(new_first_dose.replace('.', '')))) + ' ({:.2f}%)'.format(percentage_first)
 text_completa = new_completed + ' ({:.2f}%)'.format(percentage_completed)
 
 try:
