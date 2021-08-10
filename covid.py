@@ -65,11 +65,11 @@ else:
 
 logging.debug("Starting to generate the vaccines image")
 
-text_primera_dosis = dot_in_string(str(int(new_first_dose.replace('.', '')))) + ' ({:.2f}%)'.format(percentage_first)
-text_completa = new_completed + ' ({:.2f}%)'.format(percentage_completed)
+text_first_dose = new_first_dose + ' ({:.2f}%)'.format(percentage_first)
+text_completed = new_completed + ' ({:.2f}%)'.format(percentage_completed)
 
 try:
-    generate_vaccine_image(percentage_first, text_primera_dosis, percentage_completed, text_completa, day)
+    generate_vaccine_image(percentage_first, text_first_dose, percentage_completed, text_completed, day)
 except OSError:
     logging.error("Couldn't generate the vaccines image")
 else:
