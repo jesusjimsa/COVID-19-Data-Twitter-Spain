@@ -9,7 +9,7 @@ Bot de Twitter para publicar datos sobre los casos, fallecidos y vacunas de la C
 ## Fuentes de datos
 
 * Casos y fallecidos: https://www.worldometers.info/coronavirus/country/spain/
-* Vacunación: https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov/vacunaCovid19.htm
+* Vacunación: https://covid-vacuna.app
 
 ## Cuenta de Twitter
 
