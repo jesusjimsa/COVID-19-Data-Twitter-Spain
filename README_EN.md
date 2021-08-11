@@ -9,7 +9,7 @@ Twitter bot to publish data about COVID-19 cases, deaths and vaccines on Twitter
 ## Data sources
 
 * Cases and deaths: https://www.worldometers.info/coronavirus/country/spain/
-* Vaccination: https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov/vacunaCovid19.htm
+* Vaccination: https://covid-vacuna.app
 
 ## Twitter user
 
