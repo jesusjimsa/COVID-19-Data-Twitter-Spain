@@ -27,4 +27,4 @@ jobs:
         echo "ACCESS_TOKEN_SECRET=1" >> auth.py
     - name: Analysing the code with pylint
       run: |
-        pylint --max-line-length=120 --disable=C0103,W1514,R1732,R0913 `ls -R|grep .py$|xargs`
+        pylint --max-line-length=120 --disable=C0103,W1514,R1732,R0913,R1705,R1710 `ls -R|grep .py$|xargs`
