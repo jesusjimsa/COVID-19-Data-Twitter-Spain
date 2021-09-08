@@ -1,3 +1,8 @@
+"""
+Format COVID-19 information correctly and save it in text files for the next use.
+
+Created by Jesús Jiménez Sánchez.
+"""
 import logging
 
 logging.basicConfig(filename='covid.log', level=logging.DEBUG)

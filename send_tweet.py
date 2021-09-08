@@ -1,3 +1,8 @@
+"""
+Functions to send the tweets.
+
+Created by Jesús Jiménez Sánchez.
+"""
 import logging
 from twython import Twython
 from twython import TwythonError
@@ -43,5 +48,3 @@ def send_tweet(tweet_text, image_path='', in_reply_to_id=None):
         logging.error("Couldn't open the image")
     except TwythonError as e:
         logging.error("Couldn't send the tweet: %s", e)
-    else:
-        logging.debug("Tweet sent succesfully")

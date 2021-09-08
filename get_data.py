@@ -1,7 +1,12 @@
-import requests
-import logging
-import json
+"""
+Get COVID-19 data from Spain.
+
+Created by Jesús Jiménez Sánchez.
+"""
 import re
+import json
+import logging
+import requests
 from bs4 import BeautifulSoup
 
 URL_CASES = 'https://www.worldometers.info/coronavirus/country/spain/'
@@ -27,10 +32,11 @@ def get_vaccines():
     '''
     json_vaccines = requests.get(URL_VACCINES)
 
-    open('latest.json', 'wb').write(json_vaccines.content)
-    json_file = open('latest.json', 'r')
-    json_info = json.load(json_file)
-    json_file.close()
+    with open('latest.json', 'wb') as json_file:
+        json_file.write(json_vaccines.content)
+
+    with open('latest.json', 'r') as json_file:
+        json_info = json.load(json_file)
 
     distributed = str(json_info[TOTAL_JSON_POSITION]['dosisEntregadas'])
     administered = str(json_info[TOTAL_JSON_POSITION]['dosisPrimeraDosis'])
@@ -61,8 +67,10 @@ def get_cases():
 
     match = re.match(new_cases_re, str(latest_cases))
 
-    if (match):
+    if match:
         new_cases = match.group(1)
         new_deaths = match.group(2)
 
         return new_cases.replace(',', '.'), new_deaths
+
+    return None

@@ -1,8 +1,13 @@
+"""
+Get information about COVID-19 in Spain and send tweets with it.
+
+Created by Jesús Jiménez Sánchez.
+"""
 import logging
 import sys
 import json
-from datetime import date, datetime
 from time import sleep
+from datetime import date, datetime
 from get_data import get_vaccines, get_cases
 from tweet_image import generate_cases_image, generate_vaccine_image
 from send_tweet import send_tweet
@@ -86,9 +91,8 @@ logging.debug("Attempt to send the tweets")
 send_tweet(tweet_cases, image_path='today_cases.jpg')
 tweet_response = send_tweet(tweet_vaccines, image_path='vaccines_today.jpg')
 
-json_file = open('latest.json', 'r')
-json_info = json.load(json_file)
-json_file.close()
+with open('latest.json', 'r') as json_file:
+    json_info = json.load(json_file)
 
 for i in range(0, 19):
     community_tweet = ('Vacunación en ' + json_info[i]['ccaa'] + '\n\n‣ Primera dosis: ' +

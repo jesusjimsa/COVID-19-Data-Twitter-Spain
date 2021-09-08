@@ -1,5 +1,10 @@
-from PIL import Image, ImageFont, ImageDraw
+"""
+Create images to add to the tweets.
+
+Created by Jesús Jiménez Sánchez.
+"""
 import logging
+from PIL import Image, ImageFont, ImageDraw
 
 try:
     title_font = ImageFont.truetype('img_twitter/Roboto-Light.ttf', 90)
@@ -37,24 +42,23 @@ def progressBar(img_path, bgcolor, color, x, y, w, h, progress, save_path):
     im = Image.open(img_path)
     drawObject = ImageDraw.Draw(im)
 
-    '''BG'''
+    # BG
     drawObject.ellipse((x + w, y, x + h + w, y + h), fill=bgcolor)
     drawObject.ellipse((x, y, x + h, y + h), fill=bgcolor)
     drawObject.rectangle((x + (h / 2), y, x + w + (h / 2), y + h), fill=bgcolor)
 
-    '''PROGRESS'''
-    if(progress <= 0):
+    # PROGRESS
+    if progress <= 0:
         progress = 0.01
 
-    if(progress > 1):
-        progress = 1
+    progress = min(progress, 1)
 
     w = w * progress
     drawObject.ellipse((x + w, y, x + h + w, y + h), fill=color)
     drawObject.ellipse((x, y, x + h, y + h), fill=color)
     drawObject.rectangle((x + (h / 2), y, x + w + (h / 2), y + h), fill=color)
 
-    '''SAVE'''
+    # SAVE
     im.save(save_path)
 
 
