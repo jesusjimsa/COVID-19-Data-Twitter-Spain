@@ -34,5 +34,5 @@ Just have in mind these few points:
 ## Roadmap
  - [x] Add images to cases tweets
  - [x] Add images for the progress of vaccination
- - [ ] Get cases data per autonomous community and tweet it in the form of a thread
+ - [x] Get cases data per autonomous community and tweet it in the form of a thread
  - [ ] Get vaccination data per autonomous community and tweet it in the form of a thread
