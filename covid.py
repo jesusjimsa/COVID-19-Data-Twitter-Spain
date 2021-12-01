@@ -52,12 +52,12 @@ today = date.today()
 day = today.strftime("%d/%m/%Y")
 
 tweet_cases = ('Información COVID-19 ' + day + ' 🇪🇸\n\n' + '‣ Casos: ' + new_cases + '\n‣ Fallecimientos: ' + new_deaths
-               + '\n\n#COVID19España')
+               + '\n\n#COVID19España #COVID19Data #COVID19Spain')
 
 tweet_vaccines = ('Información vacunas ' + day + ' 🇪🇸\n\n' + '‣ Vacunas distribuidas: ' + new_distributed + ' (' +
                   diff_distributed_str + ')' + '\n‣ Una dosis: ' + new_first_dose + ' (' + diff_first_dose_str
                   + ')' + '\n‣ Completas: ' + new_completed + ' (' + diff_completed_str + ')' + '\n\n' +
-                  'Población inmunizada: {:.2f}%\n\n#COVID19España'.format(percentage_completed))
+                  'Población inmunizada: {:.2f}%\n\n#COVID19España #COVID19Data #COVID19Spain'.format(percentage_completed))
 
 logging.debug("Starting to generate the cases image")
 
