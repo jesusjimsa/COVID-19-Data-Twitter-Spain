@@ -51,13 +51,20 @@ percentage_completed = (int(new_completed.replace('.', '')) / POBLACION_ESP) * 1
 today = date.today()
 day = today.strftime("%d/%m/%Y")
 
-tweet_cases = ('Información COVID-19 ' + day + ' 🇪🇸\n\n' + '‣ Casos: ' + new_cases + '\n‣ Fallecimientos: ' + new_deaths
-               + '\n\n#COVID19España #COVID19Data #COVID19Spain')
+tweet_cases = (
+    f'Información COVID-19 {day} 🇪🇸\n\n'
+    f'‣ Casos: {new_cases}\n'
+    f'‣ Fallecimientos: {new_deaths}\n\n'
+    f'#COVID19España #COVID19Data #COVID19Spain'
+)
 
-tweet_vaccines = ('Información vacunas ' + day + ' 🇪🇸\n\n' + '‣ Vacunas distribuidas: ' + new_distributed + ' (' +
-                  diff_distributed_str + ')' + '\n‣ Una dosis: ' + new_first_dose + ' (' + diff_first_dose_str
-                  + ')' + '\n‣ Completas: ' + new_completed + ' (' + diff_completed_str + ')' + '\n\n' +
-                  'Población inmunizada: {:.2f}%\n\n#COVID19España #COVID19Data #COVID19Spain'.format(percentage_completed))
+tweet_vaccines = (
+    f'Información vacunas {day} 🇪🇸\n\n'
+    f'‣ Vacunas distribuidas: {new_distributed} ({diff_distributed_str})\n'
+    f'‣ Una dosis: {new_first_dose} ({diff_first_dose_str})\n'
+    f'‣ Completas: {new_completed} ({diff_completed_str})\n\n'
+    f'Población inmunizada: {percentage_completed:.2f}%\n\n#COVID19España #COVID19Data #COVID19Spain'
+)
 
 logging.debug("Starting to generate the cases image")
 
@@ -70,8 +77,8 @@ else:
 
 logging.debug("Starting to generate the vaccines image")
 
-text_first_dose = new_first_dose + ' ({:.2f}%)'.format(percentage_first)
-text_completed = new_completed + ' ({:.2f}%)'.format(percentage_completed)
+text_first_dose = new_first_dose + f' ({percentage_first:.2f}%)'
+text_completed = new_completed + f' ({percentage_completed:.2f}%)'
 
 try:
     generate_vaccine_image(percentage_first, text_first_dose, percentage_completed, text_completed, day)
@@ -95,11 +102,13 @@ with open('latest.json', 'r') as json_file:
     json_info = json.load(json_file)
 
 for i in range(0, 19):
-    community_tweet = ('Vacunación en ' + json_info[i]['ccaa'] + '\n\n‣ Primera dosis: ' +
-                       dot_in_string(str(json_info[i]['dosisPrimeraDosis'])) +
-                       ' ({:.2f}%)'.format(json_info[i]['porcentajePoblacionPrimeraDosis'] * 100) +
-                       '\n‣ Segunda dosis: ' + dot_in_string(str(json_info[i]['dosisPautaCompletada'])) +
-                       ' ({:.2f}%)'.format(json_info[i]['porcentajePoblacionCompletas'] * 100))
+    community_tweet = (
+        f"Vacunación en {json_info[i]['ccaa']}\n\n"
+        f"‣ Primera dosis: {dot_in_string(str(json_info[i]['dosisPrimeraDosis']))} "
+        f"({(json_info[i]['porcentajePoblacionPrimeraDosis'] * 100):.2f}%)\n"
+        f"‣ Segunda dosis: {dot_in_string(str(json_info[i]['dosisPautaCompletada']))} "
+        f"({(json_info[i]['porcentajePoblacionCompletas'] * 100):.2f}%)"
+    )
 
     sleep(1)    # Sleep one second to prevent suspension because of spam
     tweet_response = send_tweet(community_tweet, in_reply_to_id=tweet_response['id_str'])
