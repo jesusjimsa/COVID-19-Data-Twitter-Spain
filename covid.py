@@ -63,7 +63,8 @@ tweet_vaccines = (
     f'‣ Vacunas distribuidas: {new_distributed} ({diff_distributed_str})\n'
     f'‣ Una dosis: {new_first_dose} ({diff_first_dose_str})\n'
     f'‣ Completas: {new_completed} ({diff_completed_str})\n\n'
-    f'Población inmunizada: {percentage_completed:.2f}%\n\n#COVID19España #COVID19Data #COVID19Spain'
+    f'Población inmunizada: {percentage_completed:.2f}%\n\n'
+    f'#COVID19España #COVID19Data #COVID19Spain'
 )
 
 logging.debug("Starting to generate the cases image")

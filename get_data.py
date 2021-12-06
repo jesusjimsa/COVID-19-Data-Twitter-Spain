@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup
 
 URL_CASES = 'https://www.worldometers.info/coronavirus/country/spain/'
 URL_VACCINES = 'https://covid-vacuna.app/data/latest.json'
+URL_BOOSTER = 'https://covid.ourworldindata.org/data/owid-covid-data.json'
 
 TOTAL_JSON_POSITION = 21
 
@@ -43,6 +44,32 @@ def get_vaccines():
     completed = str(json_info[TOTAL_JSON_POSITION]['dosisPautaCompletada'])
 
     return distributed, administered, completed
+
+
+def get_boosters():
+    '''
+    Get data about boooster vaccines in Spain.
+
+    Returns
+    -------
+    booster_doses : int
+        Number of booster doses administered in Spain.
+    '''
+    json_booster = requests.get(URL_BOOSTER)
+    i = 0
+
+    with open('owid-covid-data.json', 'wb') as booster_file:
+        booster_file.write(json_booster.content)
+
+    with open('owid-covid-data.json', 'r') as json_file:
+        json_info = json.load(json_file)
+
+    while "total_boosters" not in json_info['ESP']['data'][-1 - i]:
+        i += 1
+
+    booster_doses = int(json_info['ESP']['data'][-1 - i]["total_boosters"])
+
+    return booster_doses
 
 
 def get_cases():
