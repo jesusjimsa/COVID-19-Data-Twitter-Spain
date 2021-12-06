@@ -77,8 +77,8 @@ else:
 
 logging.debug("Starting to generate the vaccines image")
 
-text_first_dose = new_first_dose + ' ({:.2f}%)'.format(percentage_first)
-text_completed = new_completed + ' ({:.2f}%)'.format(percentage_completed)
+text_first_dose = new_first_dose + f' ({percentage_first:.2f}%)'
+text_completed = new_completed + f' ({percentage_completed:.2f}%)'
 
 try:
     generate_vaccine_image(percentage_first, text_first_dose, percentage_completed, text_completed, day)
@@ -102,11 +102,13 @@ with open('latest.json', 'r') as json_file:
     json_info = json.load(json_file)
 
 for i in range(0, 19):
-    community_tweet = ('Vacunación en ' + json_info[i]['ccaa'] + '\n\n‣ Primera dosis: ' +
-                       dot_in_string(str(json_info[i]['dosisPrimeraDosis'])) +
-                       ' ({:.2f}%)'.format(json_info[i]['porcentajePoblacionPrimeraDosis'] * 100) +
-                       '\n‣ Segunda dosis: ' + dot_in_string(str(json_info[i]['dosisPautaCompletada'])) +
-                       ' ({:.2f}%)'.format(json_info[i]['porcentajePoblacionCompletas'] * 100))
+    community_tweet = (
+        f"Vacunación en {json_info[i]['ccaa']}\n\n"
+        f"‣ Primera dosis: {dot_in_string(str(json_info[i]['dosisPrimeraDosis']))} "
+        f"({(json_info[i]['porcentajePoblacionPrimeraDosis'] * 100):.2f}%)\n"
+        f"‣ Segunda dosis: {dot_in_string(str(json_info[i]['dosisPautaCompletada']))} "
+        f"({(json_info[i]['porcentajePoblacionCompletas'] * 100):.2f}%)"
+    )
 
     sleep(1)    # Sleep one second to prevent suspension because of spam
     tweet_response = send_tweet(community_tweet, in_reply_to_id=tweet_response['id_str'])
