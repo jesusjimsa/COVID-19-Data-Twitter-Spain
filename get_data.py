@@ -67,7 +67,7 @@ def get_boosters():
     while "total_boosters" not in json_info['ESP']['data'][-1 - i]:
         i += 1
 
-    booster_doses = int(json_info['ESP']['data'][-1 - i]["total_boosters"])
+    booster_doses = json_info['ESP']['data'][-1 - i]["total_boosters"]
 
     return booster_doses
 
