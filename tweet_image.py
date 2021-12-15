@@ -86,7 +86,8 @@ def generate_cases_image(cases, deaths):
     cases_image.close()
 
 
-def generate_vaccine_image(percentage_first, text_first, percentage_complete, text_complete, date):
+def generate_vaccine_image(percentage_first, text_first, percentage_complete, text_complete, percentage_booster,
+                           text_booster, date):
     '''
     Add text and progress bars to the vaccines image.
 
@@ -103,10 +104,12 @@ def generate_vaccine_image(percentage_first, text_first, percentage_complete, te
     date : str
         Date in text of the current day.
     '''
-    progressBar('img_twitter/vaccines_template.jpg', (215, 215, 215), 'orange', 25, 190, 1100, 50,
+    progressBar('img_twitter/vaccines_template.jpg', (215, 215, 215), 'orange', 25, 180, 1100, 50,
                 percentage_first / 100, 'vaccines_today.jpg')
-    progressBar('vaccines_today.jpg', (215, 215, 215), 'orange', 25, 400, 1100, 50,
+    progressBar('vaccines_today.jpg', (215, 215, 215), 'orange', 25, 340, 1100, 50,
                 percentage_complete / 100, 'vaccines_today.jpg')
+    progressBar('vaccines_today.jpg', (215, 215, 215), 'orange', 25, 500, 1100, 50,
+                percentage_booster / 100, 'vaccines_today.jpg')
 
     vaccine_image = Image.open('vaccines_today.jpg')
 
@@ -115,7 +118,9 @@ def generate_vaccine_image(percentage_first, text_first, percentage_complete, te
                               font=title_font_small)
     vaccine_img_editable.text((vaccine_image.width / 5, vaccine_image.height / 2 - 220), text_first, (0, 0, 0),
                               font=title_font_smaller)
-    vaccine_img_editable.text((vaccine_image.width / 4 - 20, vaccine_image.height / 2 - 28), text_complete, (0, 0, 0),
+    vaccine_img_editable.text((vaccine_image.width / 4 - 20, vaccine_image.height / 2 - 50), text_complete, (0, 0, 0),
+                              font=title_font_smaller)
+    vaccine_img_editable.text((vaccine_image.width / 4 - 15, vaccine_image.height / 2 + 115), text_booster, (0, 0, 0),
                               font=title_font_smaller)
 
     vaccine_image.save('vaccines_today.jpg')

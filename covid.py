@@ -8,7 +8,7 @@ import sys
 import json
 from time import sleep
 from datetime import date, datetime
-from get_data import get_vaccines, get_cases
+from get_data import get_vaccines, get_cases, get_boosters
 from tweet_image import generate_cases_image, generate_vaccine_image
 from send_tweet import send_tweet
 from prepare_data import dot_in_string, str_with_plus_symbol, read_yesterday_data, write_in_yesterday
@@ -24,29 +24,34 @@ if datetime.today().weekday() in [5, 6]:
 
 new_cases, new_deaths = get_cases()
 new_distributed, new_first_dose, new_completed = get_vaccines()
+new_booster = get_boosters()
 
 new_distributed = dot_in_string(new_distributed)
 new_first_dose = dot_in_string(new_first_dose)
 new_completed = dot_in_string(new_completed)
+new_booster = dot_in_string(new_booster)
 
 logging.debug("Cases and vaccines obtained")
 
-old_distributed, old_first_dose, old_completed = read_yesterday_data()
+old_distributed, old_first_dose, old_completed, old_booster = read_yesterday_data()
 
-write_in_yesterday(new_distributed, new_first_dose, new_completed)
+write_in_yesterday(new_distributed, new_first_dose, new_completed, new_booster)
 
 logging.debug("Numbers for tomorrow statistics written in yesterday.txt")
 
-diff_distributed = int(new_distributed.replace('.', '')) - old_distributed
+# diff_distributed = int(new_distributed.replace('.', '')) - old_distributed
 diff_first_dose = int(new_first_dose.replace('.', '')) - old_first_dose
 diff_completed = int(new_completed.replace('.', '')) - old_completed
+diff_booster = int(new_booster.replace('.', '')) - old_booster
 
-diff_distributed_str = dot_in_string(str_with_plus_symbol(diff_distributed))
+# diff_distributed_str = dot_in_string(str_with_plus_symbol(diff_distributed))
 diff_first_dose_str = dot_in_string(str_with_plus_symbol(diff_first_dose))
 diff_completed_str = dot_in_string(str_with_plus_symbol(diff_completed))
+diff_booster_str = dot_in_string(str_with_plus_symbol(diff_booster))
 
 percentage_first = ((int(new_first_dose.replace('.', '')) / POBLACION_ESP) * 100)
 percentage_completed = (int(new_completed.replace('.', '')) / POBLACION_ESP) * 100
+percentage_booster = (int(new_booster.replace('.', '')) / POBLACION_ESP) * 100
 
 today = date.today()
 day = today.strftime("%d/%m/%Y")
@@ -60,10 +65,13 @@ tweet_cases = (
 
 tweet_vaccines = (
     f'Información vacunas {day} 🇪🇸\n\n'
-    f'‣ Vacunas distribuidas: {new_distributed} ({diff_distributed_str})\n'
+    # f'‣ Vacunas distribuidas: {new_distributed} ({diff_distributed_str})\n'
     f'‣ Una dosis: {new_first_dose} ({diff_first_dose_str})\n'
-    f'‣ Completas: {new_completed} ({diff_completed_str})\n\n'
-    f'Población inmunizada: {percentage_completed:.2f}%\n\n#COVID19España #COVID19Data #COVID19Spain'
+    f'‣ Completas: {new_completed} ({diff_completed_str})\n'
+    f'‣ Refuerzo: {new_booster} ({diff_booster_str})\n\n'
+    f'Población inmunizada: {percentage_completed:.2f}%\n'
+    f'Población con dosis de refuerzo: {percentage_booster:.2f}%\n\n'
+    f'#COVID19España #COVID19Data #COVID19Spain'
 )
 
 logging.debug("Starting to generate the cases image")
@@ -79,9 +87,11 @@ logging.debug("Starting to generate the vaccines image")
 
 text_first_dose = new_first_dose + f' ({percentage_first:.2f}%)'
 text_completed = new_completed + f' ({percentage_completed:.2f}%)'
+text_booster = new_booster + f' ({percentage_booster:.2f}%)'
 
 try:
-    generate_vaccine_image(percentage_first, text_first_dose, percentage_completed, text_completed, day)
+    generate_vaccine_image(percentage_first, text_first_dose, percentage_completed, text_completed, percentage_booster,
+                           text_booster, day)
 except OSError:
     logging.error("Couldn't generate the vaccines image")
 else:

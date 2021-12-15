@@ -55,10 +55,13 @@ def read_yesterday_data():
         Number read from 'yesterday.txt' referring to administered vaccines
     old_completed : int
         Number read from 'yesterday.txt' referring to completed vaccines
+    old_booster : int
+        Number read from 'yesterday.txt' referring to booster vaccines
     '''
     old_distributed = 0
     old_administered = 0
     old_completed = 0
+    old_booster = 0
 
     try:
         with open('yesterday.txt', 'r') as f:
@@ -67,13 +70,14 @@ def read_yesterday_data():
             old_distributed = int(lines[0].strip().replace('.', ''))
             old_administered = int(lines[1].strip().replace('.', ''))
             old_completed = int(lines[2].strip().replace('.', ''))
+            old_booster = int(lines[3].strip().replace('.', ''))
     except OSError:
         logging.error("Could not read data from 'yesterday.txt'")
 
-    return old_distributed, old_administered, old_completed
+    return old_distributed, old_administered, old_completed, old_booster
 
 
-def write_in_yesterday(distributed, administered, complete):
+def write_in_yesterday(distributed, administered, complete, booster):
     '''
     Write data into 'yesterday.txt'.
 
@@ -85,6 +89,8 @@ def write_in_yesterday(distributed, administered, complete):
         Administered vaccines to be written in 'yesterday.txt'
     complete : str
         Completed vaccines to be written in 'yesterday.txt'
+    booster : str
+        Booster vaccines to be written in 'yesterday.txt'
     '''
     try:
         with open('yesterday.txt', 'w') as f:
@@ -93,6 +99,8 @@ def write_in_yesterday(distributed, administered, complete):
             f.write(administered)
             f.write('\n')
             f.write(complete)
+            f.write('\n')
+            f.write(booster)
             f.write('\n')
     except OSError:
         logging.error("Could not write data into 'yesterday.txt'")

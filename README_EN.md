@@ -35,4 +35,4 @@ Just have in mind these few points:
  - [x] Add images to cases tweets
  - [x] Add images for the progress of vaccination
  - [x] Get cases data per autonomous community and tweet it in the form of a thread
- - [ ] Get vaccination data per autonomous community and tweet it in the form of a thread
+ - [x] Get booster vaccines information

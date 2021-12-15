@@ -35,4 +35,4 @@ Simplemente ten en cuenta los siguientes puntos:
  - [x] Añadir imágenes a los tweets de casos
  - [x] Añadir imágenes para el progreso de la vacunación
  - [x] Obtener los casos por comunidad autónoma y tuitearla en forma de hilo
- - [ ] Obtener la información de vacunación por comunidad autónoma y tuitearla en forma de hilo
+ - [x] Obtener información de vacunas de refuerzo
