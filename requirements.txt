@@ -1,4 +1,4 @@
 beautifulsoup4==4.10.0
 requests==2.27.1
 twython==3.9.1
-Pillow==9.0.0
+Pillow==9.0.1
