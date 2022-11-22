@@ -31,7 +31,7 @@ def get_vaccines():
     completed : str
         Number of second doses administered in Spain.
     '''
-    json_vaccines = requests.get(URL_VACCINES)
+    json_vaccines = requests.get(URL_VACCINES, timeout=60)
 
     with open('latest.json', 'wb') as json_file:
         json_file.write(json_vaccines.content)
@@ -55,7 +55,7 @@ def get_boosters():
     booster_doses : int
         Number of booster doses administered in Spain.
     '''
-    json_booster = requests.get(URL_BOOSTER)
+    json_booster = requests.get(URL_BOOSTER, timeout=60)
     i = 0
 
     with open('owid-covid-data.json', 'wb') as booster_file:
@@ -83,7 +83,7 @@ def get_cases():
     new_deaths : str
         Number of new deaths due to COVID-19 in Spain.
     '''
-    page_cases = requests.get(URL_CASES)
+    page_cases = requests.get(URL_CASES, timeout=60)
     soup_cases = BeautifulSoup(page_cases.content, 'html.parser')
 
     results_cases = soup_cases.find(id='news_block')
